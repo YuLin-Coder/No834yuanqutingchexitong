@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.XitonggonggaoDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.addtime as addtime
+        ,a.biaoti as biaoti
+        ,a.leixing as leixing
+        ,a.neirong as neirong
+        ,a.riqi as riqi
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.XitonggonggaoView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM xitonggonggao  a
+
+        <where>
+            <if test=" params.addtimeStart != '' and params.addtimeStart != null ">
+                <![CDATA[  and DATE_FORMAT(a.addtime, '%Y-%m-%d %H:%T:%s') >=
+                DATE_FORMAT(#{params.addtimeStart}, '%Y-%m-%d %H:%T:%s')   ]]>
+            </if>
+            <if test=" params.addtimeEnd != '' and params.addtimeEnd != null ">
+                <![CDATA[  and DATE_FORMAT(a.addtime, '%Y-%m-%d %H:%T:%s') <=
+                DATE_FORMAT(#{params.addtimeEnd} , '%Y-%m-%d %H:%T:%s')    ]]>
+            </if>
+            <if test=" params.biaoti != '' and params.biaoti != null and params.biaoti != 'null' ">
+                and a.biaoti like CONCAT('%',#{params.biaoti},'%')
+            </if>
+            <if test=" params.leixing != '' and params.leixing != null and params.leixing != 'null' ">
+                and a.leixing like CONCAT('%',#{params.leixing},'%')
+            </if>
+            <if test=" params.neirong != '' and params.neirong != null and params.neirong != 'null' ">
+                and a.neirong like CONCAT('%',#{params.neirong},'%')
+            </if>
+            <if test=" params.riqiStart != '' and params.riqiStart != null ">
+                <![CDATA[  and DATE_FORMAT(a.riqi, '%Y-%m-%d %H:%T:%s') >=
+                DATE_FORMAT(#{params.riqiStart}, '%Y-%m-%d %H:%T:%s')   ]]>
+            </if>
+            <if test=" params.riqiEnd != '' and params.riqiEnd != null ">
+                <![CDATA[  and DATE_FORMAT(a.riqi, '%Y-%m-%d %H:%T:%s') <=
+                DATE_FORMAT(#{params.riqiEnd} , '%Y-%m-%d %H:%T:%s')    ]]>
+            </if>
+
+        </where>
+        order by a.id desc
+    </select>
+
+</mapper>

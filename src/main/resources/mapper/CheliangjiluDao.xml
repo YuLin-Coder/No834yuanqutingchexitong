@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.CheliangjiluDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.chepai_number as chepaiNumber
+        ,a.chewei_id as cheweiId
+        ,a.cheliangjilu_types as cheliangjiluTypes
+        ,a.insert_time as insertTime
+        ,a.update_time as updateTime
+        ,a.xiaoshi as xiaoshi
+        ,a.monery as monery
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.CheliangjiluView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,chewei.chewei_name as cheweiName
+        ,chewei.chewei_types as cheweiTypes
+        ,chewei.chezhu_id as chezhuId
+--         ,chewei.chepai_number as chepaiNumber
+
+        FROM cheliangjilu  a
+        left JOIN chewei chewei ON a.chewei_id = chewei.id
+
+        <where>
+            <if test=" params.chepaiNumber != '' and params.chepaiNumber != null and params.chepaiNumber != 'null' ">
+                and a.chepai_number like CONCAT('%',#{params.chepaiNumber},'%')
+            </if>
+            <if test="params.cheweiId != null">
+                and a.chewei_id = #{params.cheweiId}
+            </if>
+            <if test="params.cheliangjiluTypes != null">
+                and a.cheliangjilu_types = #{params.cheliangjiluTypes}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and DATE_FORMAT(a.insert_time, '%Y-%m-%d %H:%T:%s') >=
+                DATE_FORMAT(#{params.insertTimeStart}, '%Y-%m-%d %H:%T:%s')   ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and DATE_FORMAT(a.insert_time, '%Y-%m-%d %H:%T:%s') <=
+                DATE_FORMAT(#{params.insertTimeEnd} , '%Y-%m-%d %H:%T:%s')    ]]>
+            </if>
+            <if test=" params.updateTimeStart != '' and params.updateTimeStart != null ">
+                <![CDATA[  and DATE_FORMAT(a.update_time, '%Y-%m-%d %H:%T:%s') >=
+                DATE_FORMAT(#{params.updateTimeStart}, '%Y-%m-%d %H:%T:%s')   ]]>
+            </if>
+            <if test=" params.updateTimeEnd != '' and params.updateTimeEnd != null ">
+                <![CDATA[  and DATE_FORMAT(a.update_time, '%Y-%m-%d %H:%T:%s') <=
+                DATE_FORMAT(#{params.updateTimeEnd} , '%Y-%m-%d %H:%T:%s')    ]]>
+            </if>
+            <if test="params.xiaoshiStart != null">
+                <![CDATA[  and a.xiaoshi >= #{params.xiaoshiStart}   ]]>
+            </if>
+            <if test="params.xiaoshiEnd != null">
+                <![CDATA[  and a.xiaoshi <= #{params.xiaoshiEnd}   ]]>
+            </if>
+            <if test="params.moneryStart != null">
+                <![CDATA[  and a.monery >= #{params.moneryStart}   ]]>
+            </if>
+            <if test="params.moneryEnd != null">
+                <![CDATA[  and a.monery <= #{params.moneryEnd}   ]]>
+            </if>
+
+            <if test=" params.cheweiName != '' and params.cheweiName != null and params.cheweiName != 'null' ">
+                and chewei.chewei_name like CONCAT('%',#{params.cheweiName},'%')
+            </if>
+            <if test="params.cheweiTypes != null">
+                and chewei.chewei_types = #{params.cheweiTypes}
+            </if>
+
+            <if test="params.chezhuId != null">
+                and chewei.chezhu_id = #{params.chezhuId}
+            </if>
+            <!--<if test=" params.chepaiNumber != '' and params.chepaiNumber != null and params.chepaiNumber != 'null' ">-->
+                <!--and chewei.chepai_number like CONCAT('%',#{params.chepaiNumber},'%')-->
+            <!--</if>-->
+        </where>
+        order by a.id desc
+    </select>
+
+</mapper>

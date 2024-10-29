@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.ChezhuDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.chezhu_name as chezhuName
+        ,a.sex_types as sexTypes
+        ,a.chezhu_id_number as chezhuIdNumber
+        ,a.chezhu_phone as chezhuPhone
+        ,a.chezhu_chepai_number as chezhuChepaiNumber
+        ,a.chezhu_photo as chezhuPhoto
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.ChezhuView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+
+        FROM chezhu  a
+
+        <where>
+            <if test=" params.chezhuName != '' and params.chezhuName != null and params.chezhuName != 'null' ">
+                and a.chezhu_name like CONCAT('%',#{params.chezhuName},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and a.sex_types = #{params.sexTypes}
+            </if>
+            <if test=" params.chezhuIdNumber != '' and params.chezhuIdNumber != null and params.chezhuIdNumber != 'null' ">
+                and a.chezhu_id_number like CONCAT('%',#{params.chezhuIdNumber},'%')
+            </if>
+            <if test=" params.chezhuPhone != '' and params.chezhuPhone != null and params.chezhuPhone != 'null' ">
+                and a.chezhu_phone like CONCAT('%',#{params.chezhuPhone},'%')
+            </if>
+            <if test=" params.chezhuChepaiNumber != '' and params.chezhuChepaiNumber != null and params.chezhuChepaiNumber != 'null' ">
+                and a.chezhu_chepai_number like CONCAT('%',#{params.chezhuChepaiNumber},'%')
+            </if>
+
+        </where>
+        order by a.id desc
+    </select>
+
+</mapper>

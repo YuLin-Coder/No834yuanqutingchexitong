@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.CheweiDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.chewei_name as cheweiName
+        ,a.chewei_types as cheweiTypes
+        ,a.chezhu_id as chezhuId
+        ,a.chepai_number as chepaiNumber
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.CheweiView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,chezhu.chezhu_name as chezhuName
+        ,chezhu.sex_types as sexTypes
+        ,chezhu.chezhu_id_number as chezhuIdNumber
+        ,chezhu.chezhu_phone as chezhuPhone
+        ,chezhu.chezhu_chepai_number as chezhuChepaiNumber
+        ,chezhu.chezhu_photo as chezhuPhoto
+
+        FROM chewei  a
+        left JOIN chezhu chezhu ON a.chezhu_id = chezhu.id
+
+        <where>
+            <if test=" params.cheweiName != '' and params.cheweiName != null and params.cheweiName != 'null' ">
+                and a.chewei_name like CONCAT('%',#{params.cheweiName},'%')
+            </if>
+            <if test="params.cheweiTypes != null">
+                and a.chewei_types = #{params.cheweiTypes}
+            </if>
+            <if test="params.chezhuId != null">
+                and a.chezhu_id = #{params.chezhuId}
+            </if>
+            <if test="params.chepaiNumberStart != null">
+                <![CDATA[  and a.chepai_number >= #{params.chepaiNumberStart}   ]]>
+            </if>
+            <if test="params.chepaiNumberEnd != null">
+                <![CDATA[  and a.chepai_number <= #{params.chepaiNumberEnd}   ]]>
+            </if>
+
+            <if test=" params.chezhuName != '' and params.chezhuName != null and params.chezhuName != 'null' ">
+                and chezhu.chezhu_name like CONCAT('%',#{params.chezhuName},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and chezhu.sex_types = #{params.sexTypes}
+            </if>
+
+            <if test=" params.chezhuIdNumber != '' and params.chezhuIdNumber != null and params.chezhuIdNumber != 'null' ">
+                and chezhu.chezhu_id_number like CONCAT('%',#{params.chezhuIdNumber},'%')
+            </if>
+            <if test=" params.chezhuPhone != '' and params.chezhuPhone != null and params.chezhuPhone != 'null' ">
+                and chezhu.chezhu_phone like CONCAT('%',#{params.chezhuPhone},'%')
+            </if>
+            <if test=" params.chezhuChepaiNumber != '' and params.chezhuChepaiNumber != null and params.chezhuChepaiNumber != 'null' ">
+                and chezhu.chezhu_chepai_number like CONCAT('%',#{params.chezhuChepaiNumber},'%')
+            </if>
+        </where>
+        order by a.id desc
+    </select>
+
+</mapper>
